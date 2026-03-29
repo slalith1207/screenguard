@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ScreenGuard – Reduce Your Screen Time</title>
+  <meta name="description" content="ScreenGuard helps you reduce screen time and set social media limits to build healthier digital habits." />
+
+  <!-- ===== PWA Meta Tags ===== -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#a78bfa" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="ScreenGuard" />
+
+  <!-- Apple iOS PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ScreenGuard" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png" />
+  <link rel="apple-touch-icon" sizes="144x144" href="icons/icon-144.png" />
+  <link rel="apple-touch-startup-image" href="icons/icon-512.png" />
+
+  <!-- Android / General -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="32x32"  href="icons/icon-96.png" />
+  <link rel="shortcut icon" href="icons/icon-96.png" />
+
+  <!-- Microsoft Tiles -->
+  <meta name="msapplication-TileImage" content="icons/icon-144.png" />
+  <meta name="msapplication-TileColor" content="#0a0a12" />
+
+  <!-- Open Graph (sharing preview) -->
+  <meta property="og:title"       content="ScreenGuard – Screen Time Manager" />
+  <meta property="og:description" content="Set limits for social media, auto-lock apps, earn rewards for healthy habits." />
+  <meta property="og:image"       content="icons/icon-512.png" />
+  <meta property="og:type"        content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ===== PWA INSTALL BANNER ===== -->
+  <div class="pwa-install-banner" id="pwaInstallBanner">
+    <div class="pwa-banner-left">
+      <img src="icons/icon-96.png" alt="ScreenGuard" class="pwa-banner-icon" />
+      <div class="pwa-banner-text">
+        <strong>Install ScreenGuard</strong>
+        <span>Add to Home Screen — works offline!</span>
+      </div>
+    </div>
+    <div class="pwa-banner-actions">
+      <button class="pwa-install-btn" id="pwaInstallBtn">⬇️ Install</button>
+      <button class="pwa-dismiss-btn" id="pwaDismissBtn">✕</button>
+    </div>
+  </div>
+
+  <!-- ===== iOS INSTALL GUIDE (shows only on Safari iOS) ===== -->
+  <div class="ios-install-guide" id="iosInstallGuide">
+    <button class="ios-guide-close" id="iosGuideClose">✕</button>
+    <div class="ios-guide-icon">📲</div>
+    <h3>Install on iPhone</h3>
+    <ol class="ios-steps">
+      <li>Tap the <strong>Share</strong> button <span class="ios-share-icon">⬆️</span> at the bottom of Safari</li>
+      <li>Scroll down and tap <strong>"Add to Home Screen"</strong></li>
+      <li>Tap <strong>Add</strong> — done! 🎉</li>
+    </ol>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="url(#grad1)" stroke-width="2.5"/>
+            <path d="M12 6v6l4 2" stroke="url(#grad1)" stroke-width="2.5" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#a78bfa"/>
+                <stop offset="100%" style="stop-color:#60a5fa"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <span class="logo-text">ScreenGuard</span>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li>
+        <a href="#" class="nav-link active" data-page="dashboard" id="nav-dashboard">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link" data-page="apps" id="nav-apps">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="2.5"/><path d="M7 8h10M7 12h7M7 16h5"/>
+          </svg>
+          <span>App Limits</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link" data-page="stats" id="nav-stats">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>
+          </svg>
+          <span>Statistics</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link" data-page="schedule" id="nav-schedule">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <span>Schedule</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link" data-page="rewards" id="nav-rewards">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          <span>Rewards</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link" data-page="settings" id="nav-settings">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 1.93 2.74L19 9l1 3-1.5 2.5 1.5 2.5L18 19s-2 1.5-3 1.5L12 22l-3-.5-3 .5s-1-1.5-1.5-2.5L6 17l-2-2.5 1-3-2-1.33A10 10 0 0 1 4.93 4.93"/>
+          </svg>
+          <span>Settings</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="streak-card">
+        <div class="streak-flame">🔥</div>
+        <div class="streak-info">
+          <span class="streak-label">Current Streak</span>
+          <span class="streak-days" id="streakDays">7 Days</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Top Bar -->
+  <div class="mobile-topbar">
+    <button class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </button>
+    <span class="mobile-title">ScreenGuard</span>
+    <div class="mobile-avatar">LS</div>
+  </div>
+
+  <!-- Overlay for mobile sidebar -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <!-- ===== DASHBOARD PAGE ===== -->
+    <section class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Good <span id="timeGreeting">Evening</span> 👋</h1>
+          <p class="page-subtitle">Here's your screen time overview for today.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-test-lock" id="testLockBtn">🔒 Test Lock</button>
+          <button class="btn-secondary" id="syncBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+            </svg>
+            Sync
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="stats-grid">
+        <div class="stat-card accent-purple">
+          <div class="stat-icon">📱</div>
+          <div class="stat-info">
+            <span class="stat-value" id="totalTimeToday">3h 24m</span>
+            <span class="stat-label">Total Screen Time</span>
+          </div>
+          <div class="stat-change down">↓ 12% vs yesterday</div>
+        </div>
+        <div class="stat-card accent-blue">
+          <div class="stat-icon">🚫</div>
+          <div class="stat-info">
+            <span class="stat-value" id="appsLimited">4</span>
+            <span class="stat-label">Apps Limited</span>
+          </div>
+          <div class="stat-change neutral">Active Limits</div>
+        </div>
+        <div class="stat-card accent-green">
+          <div class="stat-icon">✅</div>
+          <div class="stat-info">
+            <span class="stat-value" id="goalsMetCount">3/5</span>
+            <span class="stat-label">Goals Met Today</span>
+          </div>
+          <div class="stat-change up">↑ Good progress</div>
+        </div>
+        <div class="stat-card accent-orange">
+          <div class="stat-icon">🔓</div>
+          <div class="stat-info">
+            <span class="stat-value" id="unlockCount">38</span>
+            <span class="stat-label">Phone Pickups</span>
+          </div>
+          <div class="stat-change down">↓ 5 less than avg</div>
+        </div>
+      </div>
+
+      <!-- Main Cards Row -->
+      <div class="cards-row">
+        <!-- Today's Usage Donut -->
+        <div class="card card-usage">
+          <div class="card-header">
+            <h3>Today's Usage</h3>
+            <span class="badge badge-blue">Live</span>
+          </div>
+          <div class="donut-chart-container">
+            <svg class="donut-svg" viewBox="0 0 200 200">
+              <circle class="donut-bg" cx="100" cy="100" r="75" />
+              <circle id="donut-instagram" class="donut-segment" cx="100" cy="100" r="75"
+                stroke="#E1306C" stroke-dasharray="94.25 377" stroke-dashoffset="0" />
+              <circle id="donut-youtube" class="donut-segment" cx="100" cy="100" r="75"
+                stroke="#FF0000" stroke-dasharray="75.4 377" stroke-dashoffset="-94.25" />
+              <circle id="donut-tiktok" class="donut-segment" cx="100" cy="100" r="75"
+                stroke="#69C9D0" stroke-dasharray="56.55 377" stroke-dashoffset="-169.65" />
+              <circle id="donut-twitter" class="donut-segment" cx="100" cy="100" r="75"
+                stroke="#1DA1F2" stroke-dasharray="47.12 377" stroke-dashoffset="-226.2" />
+              <circle id="donut-other" class="donut-segment" cx="100" cy="100" r="75"
+                stroke="#8b5cf6" stroke-dasharray="103.67 377" stroke-dashoffset="-273.32" />
+              <text x="100" y="90" class="donut-center-value" text-anchor="middle">3h 24m</text>
+              <text x="100" y="110" class="donut-center-label" text-anchor="middle">Total today</text>
+            </svg>
+            <div class="donut-legend">
+              <div class="legend-item"><span class="legend-dot" style="background:#E1306C"></span>Instagram <strong>1h 30m</strong></div>
+              <div class="legend-item"><span class="legend-dot" style="background:#FF0000"></span>YouTube <strong>1h 12m</strong></div>
+              <div class="legend-item"><span class="legend-dot" style="background:#69C9D0"></span>TikTok <strong>54m</strong></div>
+              <div class="legend-item"><span class="legend-dot" style="background:#1DA1F2"></span>Twitter <strong>45m</strong></div>
+              <div class="legend-item"><span class="legend-dot" style="background:#8b5cf6"></span>Other <strong>1h 39m</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Limit Alerts -->
+        <div class="card card-alerts">
+          <div class="card-header">
+            <h3>Limit Alerts</h3>
+            <button class="btn-ghost" data-page="apps">Manage →</button>
+          </div>
+          <div class="alerts-list" id="alertsList">
+            <div class="alert-item critical">
+              <div class="alert-app-icon" style="background: linear-gradient(135deg,#f56040,#E1306C)">📸</div>
+              <div class="alert-info">
+                <span class="alert-app-name">Instagram</span>
+                <div class="alert-progress-bar">
+                  <div class="alert-progress-fill" style="width:100%;background:#ef4444"></div>
+                </div>
+                <span class="alert-time critical-text">1h 30m / 1h 30m — Limit Reached!</span>
+              </div>
+              <div class="alert-status critical-badge">🔴</div>
+            </div>
+            <div class="alert-item warning">
+              <div class="alert-app-icon" style="background: linear-gradient(135deg,#FF0000,#cc0000)">▶</div>
+              <div class="alert-info">
+                <span class="alert-app-name">YouTube</span>
+                <div class="alert-progress-bar">
+                  <div class="alert-progress-fill" style="width:80%;background:#f59e0b"></div>
+                </div>
+                <span class="alert-time warning-text">1h 12m / 1h 30m — 18m remaining</span>
+              </div>
+              <div class="alert-status warning-badge">🟡</div>
+            </div>
+            <div class="alert-item safe">
+              <div class="alert-app-icon" style="background: linear-gradient(135deg,#69C9D0,#010101)">🎵</div>
+              <div class="alert-info">
+                <span class="alert-app-name">TikTok</span>
+                <div class="alert-progress-bar">
+                  <div class="alert-progress-fill" style="width:60%;background:#10b981"></div>
+                </div>
+                <span class="alert-time safe-text">54m / 1h 30m — 36m remaining</span>
+              </div>
+              <div class="alert-status safe-badge">🟢</div>
+            </div>
+            <div class="alert-item safe">
+              <div class="alert-app-icon" style="background: linear-gradient(135deg,#1DA1F2,#0d8ed9)">🐦</div>
+              <div class="alert-info">
+                <span class="alert-app-name">Twitter / X</span>
+                <div class="alert-progress-bar">
+                  <div class="alert-progress-fill" style="width:50%;background:#10b981"></div>
+                </div>
+                <span class="alert-time safe-text">45m / 1h 30m — 45m remaining</span>
+              </div>
+              <div class="alert-status safe-badge">🟢</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hourly Timeline -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Hourly Activity</h3>
+          <div class="toggle-group">
+            <button class="toggle-btn active" id="toggleToday">Today</button>
+            <button class="toggle-btn" id="toggleWeek">Week avg</button>
+          </div>
+        </div>
+        <div class="hourly-chart" id="hourlyChart">
+          <!-- bars generated by JS -->
+        </div>
+        <div class="hourly-labels" id="hourlyLabels"></div>
+      </div>
+
+      <!-- Focus Mode Banner -->
+      <div class="focus-banner" id="focusBanner">
+        <div class="focus-info">
+          <div class="focus-icon">🧘</div>
+          <div>
+            <h4>Focus Mode</h4>
+            <p>Block all social media and distracting apps</p>
+          </div>
+        </div>
+        <div class="focus-controls">
+          <select id="focusDuration" class="focus-select">
+            <option value="15">15 min</option>
+            <option value="30" selected>30 min</option>
+            <option value="60">1 hour</option>
+            <option value="120">2 hours</option>
+          </select>
+          <button class="btn-primary" id="startFocusBtn">Start Focus</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== APP LIMITS PAGE ===== -->
+    <section class="page" id="page-apps">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">App Limits</h1>
+          <p class="page-subtitle">Set daily time limits for social media and other apps.</p>
+        </div>
+        <button class="btn-primary" id="addAppBtn">+ Add App</button>
+      </div>
+
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-filter="all">All Apps</button>
+        <button class="filter-tab" data-filter="social">Social Media</button>
+        <button class="filter-tab" data-filter="entertainment">Entertainment</button>
+        <button class="filter-tab" data-filter="productivity">Productivity</button>
+      </div>
+
+      <div class="apps-grid" id="appsGrid">
+        <!-- populated by JS -->
+      </div>
+    </section>
+
+    <!-- ===== STATS PAGE ===== -->
+    <section class="page" id="page-stats">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Statistics</h1>
+          <p class="page-subtitle">Track your screen time trends over time.</p>
+        </div>
+        <div class="header-actions">
+          <select class="select-input" id="statsPeriod">
+            <option value="7">Last 7 Days</option>
+            <option value="30">Last 30 Days</option>
+            <option value="90">Last 3 Months</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="stats-cards-row">
+        <div class="mini-stat-card">
+          <span class="mini-stat-icon">📉</span>
+          <div>
+            <span class="mini-stat-value">28%</span>
+            <span class="mini-stat-label">Reduction this week</span>
+          </div>
+        </div>
+        <div class="mini-stat-card">
+          <span class="mini-stat-icon">⏰</span>
+          <div>
+            <span class="mini-stat-value">4h 12m</span>
+            <span class="mini-stat-label">Daily average</span>
+          </div>
+        </div>
+        <div class="mini-stat-card">
+          <span class="mini-stat-icon">🏆</span>
+          <div>
+            <span class="mini-stat-value">5/7</span>
+            <span class="mini-stat-label">Days under goal</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cards-row">
+        <div class="card" style="flex:2">
+          <div class="card-header">
+            <h3>Daily Screen Time</h3>
+          </div>
+          <div class="bar-chart-container" id="weeklyBarChart">
+            <!-- generated by JS -->
+          </div>
+        </div>
+        <div class="card" style="flex:1">
+          <div class="card-header">
+            <h3>Top Apps</h3>
+          </div>
+          <div class="top-apps-list" id="topAppsList">
+            <!-- generated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Screen Time Heatmap</h3>
+          <span class="badge badge-purple">Last 4 Weeks</span>
+        </div>
+        <div class="heatmap-container" id="heatmapContainer">
+          <!-- generated by JS -->
+        </div>
+        <div class="heatmap-legend">
+          <span>Less</span>
+          <div class="heatmap-legend-squares">
+            <div style="background:rgba(139,92,246,0.1)"></div>
+            <div style="background:rgba(139,92,246,0.3)"></div>
+            <div style="background:rgba(139,92,246,0.5)"></div>
+            <div style="background:rgba(139,92,246,0.7)"></div>
+            <div style="background:rgba(139,92,246,1)"></div>
+          </div>
+          <span>More</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SCHEDULE PAGE ===== -->
+    <section class="page" id="page-schedule">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Schedule</h1>
+          <p class="page-subtitle">Set downtime windows and smart blocking schedules.</p>
+        </div>
+        <button class="btn-primary" id="addScheduleBtn">+ Add Rule</button>
+      </div>
+
+      <div class="schedule-grid" id="scheduleGrid">
+        <!-- rendered by JS -->
+      </div>
+
+      <div class="card bedtime-card">
+        <div class="bedtime-header">
+          <div>
+            <h3>🌙 Bedtime Mode</h3>
+            <p>Block all apps and dim screen automatically</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="bedtimeToggle" checked />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="bedtime-controls">
+          <div class="time-range">
+            <label>Starts</label>
+            <input type="time" id="bedtimeStart" value="22:00" class="time-input" />
+          </div>
+          <div class="time-range">
+            <label>Ends</label>
+            <input type="time" id="bedtimeEnd" value="07:00" class="time-input" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== REWARDS PAGE ===== -->
+    <section class="page" id="page-rewards">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Rewards</h1>
+          <p class="page-subtitle">Earn badges for healthy screen time habits.</p>
+        </div>
+      </div>
+
+      <div class="xp-bar-card">
+        <div class="xp-header">
+          <span class="xp-level">Level 5 — Digital Detoxer</span>
+          <span class="xp-points">1,240 / 2,000 XP</span>
+        </div>
+        <div class="xp-bar">
+          <div class="xp-fill" style="width:62%"></div>
+        </div>
+        <p class="xp-hint">760 XP to reach Level 6 — "Mindful Master"</p>
+      </div>
+
+      <h3 class="section-title">🏅 Badges Earned</h3>
+      <div class="badges-grid" id="badgesGrid">
+        <!-- generated by JS -->
+      </div>
+
+      <h3 class="section-title">🎯 Active Challenges</h3>
+      <div class="challenges-list" id="challengesList">
+        <!-- generated by JS -->
+      </div>
+    </section>
+
+    <!-- ===== SETTINGS PAGE ===== -->
+    <section class="page" id="page-settings">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Settings</h1>
+          <p class="page-subtitle">Customize your ScreenGuard experience.</p>
+        </div>
+      </div>
+
+      <div class="settings-sections">
+        <div class="settings-group">
+          <h3 class="settings-group-title">General</h3>
+          <div class="settings-list">
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-name">Daily Goal</span>
+                <span class="setting-desc">Target maximum screen time per day</span>
+              </div>
+              <select class="select-input" id="dailyGoalSelect">
+                <option value="120">2 hours</option>
+                <option value="180" selected>3 hours</option>
+                <option value="240">4 hours</option>
+                <option value="300">5 hours</option>
+              </select>
+            </div>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-name">Notifications</span>
+                <span class="setting-desc">Get alerts when nearing your limit</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="notifToggle" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-name">Strict Mode</span>
+                <span class="setting-desc">Cannot bypass limits once set</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="strictToggle" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-name">Weekly Report</span>
+                <span class="setting-desc">Receive summary every Monday</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="weeklyToggle" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <h3 class="settings-group-title">Appearance</h3>
+          <div class="settings-list">
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-name">Theme</span>
+                <span class="setting-desc">Choose your preferred look</span>
+              </div>
+              <div class="theme-buttons">
+                <button class="theme-btn active" id="darkThemeBtn">🌙 Dark</button>
+                <button class="theme-btn" id="lightThemeBtn">☀️ Light</button>
+              </div>
+            </div>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-name">Accent Color</span>
+                <span class="setting-desc">Primary color for the interface</span>
+              </div>
+              <div class="color-pickers">
+                <div class="color-swatch active" style="background:linear-gradient(135deg,#a78bfa,#60a5fa)" data-accent="purple"></div>
+                <div class="color-swatch" style="background:linear-gradient(135deg,#34d399,#10b981)" data-accent="green"></div>
+                <div class="color-swatch" style="background:linear-gradient(135deg,#f59e0b,#ef4444)" data-accent="orange"></div>
+                <div class="color-swatch" style="background:linear-gradient(135deg,#f472b6,#a855f7)" data-accent="pink"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <h3 class="settings-group-title">Data & Privacy</h3>
+          <div class="settings-list">
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-name">Export Data</span>
+                <span class="setting-desc">Download your screen time history as CSV</span>
+              </div>
+              <button class="btn-secondary" id="exportBtn">Export</button>
+            </div>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-name">Reset Statistics</span>
+                <span class="setting-desc">Clear all saved usage data</span>
+              </div>
+              <button class="btn-danger" id="resetBtn">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Add App Modal -->
+  <div class="modal-overlay" id="addAppModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Add App Limit</h2>
+        <button class="modal-close" id="closeAddAppModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>App Name</label>
+          <select class="form-control" id="newAppSelect">
+            <option value="">Select an app...</option>
+            <option value="Facebook">Facebook</option>
+            <option value="Snapchat">Snapchat</option>
+            <option value="Reddit">Reddit</option>
+            <option value="Pinterest">Pinterest</option>
+            <option value="LinkedIn">LinkedIn</option>
+            <option value="Netflix">Netflix</option>
+            <option value="Spotify">Spotify</option>
+            <option value="WhatsApp">WhatsApp</option>
+            <option value="Telegram">Telegram</option>
+            <option value="Discord">Discord</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Daily Limit</label>
+          <div class="slider-container">
+            <input type="range" id="limitSlider" min="5" max="240" step="5" value="60" class="form-slider" />
+            <span class="slider-value" id="sliderValue">1h 0m</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select class="form-control" id="newAppCategory">
+            <option value="social">Social Media</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="productivity">Productivity</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Days Active</label>
+          <div class="days-selector" id="daysSelector">
+            <button class="day-btn active" data-day="Mon">M</button>
+            <button class="day-btn active" data-day="Tue">T</button>
+            <button class="day-btn active" data-day="Wed">W</button>
+            <button class="day-btn active" data-day="Thu">T</button>
+            <button class="day-btn active" data-day="Fri">F</button>
+            <button class="day-btn" data-day="Sat">S</button>
+            <button class="day-btn" data-day="Sun">S</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelAddApp">Cancel</button>
+        <button class="btn-primary" id="confirmAddApp">Add Limit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Focus Mode Active Overlay -->
+  <div class="focus-overlay" id="focusOverlay">
+    <div class="focus-content">
+      <div class="focus-emoji">🧘</div>
+      <h2>Focus Mode Active</h2>
+      <p>Stay away from distractions!</p>
+      <div class="focus-timer" id="focusTimer">30:00</div>
+      <div class="focus-timer-bar"><div class="focus-timer-fill" id="focusTimerFill"></div></div>
+      <button class="btn-secondary" id="endFocusBtn">End Focus ✕</button>
+    </div>
+  </div>
+
+  <!-- ===== AUTO-LOCK OVERLAY ===== -->
+  <div class="auto-lock-overlay" id="autoLockOverlay">
+    <div class="auto-lock-content">
+      <!-- Shaking padlock -->
+      <div class="lock-padlock" id="lockPadlock">🔒</div>
+
+      <div class="lock-app-row">
+        <div class="lock-app-emoji" id="lockAppEmoji">📸</div>
+        <div>
+          <h2 class="lock-title" id="lockAppName">Instagram</h2>
+          <p class="lock-subtitle">Daily limit reached</p>
+        </div>
+      </div>
+
+      <div class="lock-limit-pill">
+        <span>⏱ Limit:</span>
+        <strong id="lockLimitTime">1h 30m</strong>
+        <span>used today</span>
+      </div>
+
+      <!-- Countdown to midnight -->
+      <div class="lock-countdown-card">
+        <div class="lock-countdown-label">🌅 Unlocks automatically in</div>
+        <div class="lock-countdown" id="lockCountdown">00:00:00</div>
+        <div class="lock-countdown-sub">at midnight (daily reset)</div>
+      </div>
+
+      <!-- Pulsing bars to show phone is locked -->
+      <div class="lock-bars">
+        <div class="lock-bar" style="animation-delay:0s"></div>
+        <div class="lock-bar" style="animation-delay:0.2s"></div>
+        <div class="lock-bar" style="animation-delay:0.4s"></div>
+        <div class="lock-bar" style="animation-delay:0.6s"></div>
+        <div class="lock-bar" style="animation-delay:0.8s"></div>
+      </div>
+
+      <!-- Bypass with hold -->
+      <div class="bypass-section">
+        <button class="bypass-btn" id="bypassBtn">Hold to Override (5s)</button>
+        <div class="bypass-bar-bg">
+          <div class="bypass-bar-fill" id="bypassFill"></div>
+        </div>
+        <p class="bypass-warn">⚠️ Overriding your limit weakens your habit</p>
+      </div>
+
+      <button class="lock-close-btn" id="lockCloseBtn">✕ Dismiss (App stays locked)</button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <span class="toast-icon">✅</span>
+    <span class="toast-message" id="toastMsg">Settings saved!</span>
+  </div>
+
+  <script src="app.js"></script>
+
+  <!-- ===== SERVICE WORKER + PWA INSTALL LOGIC ===== -->
+  <script>
+    // --- Register Service Worker ---
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('[SW] Registered:', reg.scope))
+          .catch(err => console.warn('[SW] Registration failed:', err));
+      });
+    }
+
+    // --- PWA Install Prompt (Android/Chrome) ---
+    let deferredPrompt = null;
+    const banner    = document.getElementById('pwaInstallBanner');
+    const installBtn= document.getElementById('pwaInstallBtn');
+    const dismissBtn= document.getElementById('pwaDismissBtn');
+
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredPrompt = e;
+      // Show our custom banner after 3 seconds
+      setTimeout(() => { if (banner) banner.classList.add('show'); }, 3000);
+    });
+
+    if (installBtn) {
+      installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        banner.classList.remove('show');
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('[PWA] Install outcome:', outcome);
+        deferredPrompt = null;
+      });
+    }
+
+    if (dismissBtn) {
+      dismissBtn.addEventListener('click', () => {
+        banner.classList.remove('show');
+      });
+    }
+
+    // Hide banner when already installed
+    window.addEventListener('appinstalled', () => {
+      banner.classList.remove('show');
+      console.log('[PWA] App installed!');
+    });
+
+    // --- iOS Safari Install Guide ---
+    function isIOS() {
+      return /iphone|ipad|ipod/i.test(navigator.userAgent);
+    }
+    function isInStandaloneMode() {
+      return window.navigator.standalone === true;
+    }
+
+    const iosGuide    = document.getElementById('iosInstallGuide');
+    const iosClose    = document.getElementById('iosGuideClose');
+    const shown       = sessionStorage.getItem('iosGuideShown');
+
+    if (isIOS() && !isInStandaloneMode() && !shown && iosGuide) {
+      setTimeout(() => {
+        iosGuide.classList.add('show');
+        sessionStorage.setItem('iosGuideShown', '1');
+      }, 3000);
+    }
+
+    if (iosClose) iosClose.addEventListener('click', () => iosGuide.classList.remove('show'));
+  </script>
+</body>
+</html>
